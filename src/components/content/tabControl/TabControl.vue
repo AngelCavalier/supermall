@@ -32,6 +32,8 @@ export default {
   methods: {
     itemClick(index) {
       this.currentIndex = index;
+      // 子组件向父组件传递事件
+      this.$emit("tabClick", index);
     },
   },
 };
