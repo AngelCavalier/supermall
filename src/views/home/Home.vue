@@ -6,6 +6,8 @@
       ref="scroll"
       :probe-type="3"
       @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
     >
       <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends" />
@@ -89,19 +91,23 @@ export default {
           break;
       }
     },
+    // 返回顶部
     backClick() {
-      this.$refs.scroll.scrollTo(0, 0);
+      this.$refs.scroll.scrollTo(0, 0, 1000);
     },
+    // 判断下拉距离
     contentScroll(position) {
-      // console.log(position);
       this.ShowBackTop = position.y < -1000;
+    },
+    // 加载数据
+    loadMore() {
+      this.getHomeGoods(this.currentType);
     },
     /**
      * 网络请求相关方法
      */
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
-        // console.log(res);
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       });
@@ -109,9 +115,10 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then((res) => {
-        // console.log(res);
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        // 上拉加载更多，再次加载数据
+        this.$refs.scroll.againPullUp();
       });
     },
   },
