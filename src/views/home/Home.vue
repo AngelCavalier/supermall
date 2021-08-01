@@ -1,15 +1,23 @@
 <template>
-  <div id="home">
+  <div id="home" class="wrapper">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
-    <recommend-view :recommends="recommends"></recommend-view>
-    <feature-view></feature-view>
-    <tab-control
-      class="tab-control"
-      :titles="['流行', '新款', '精选']"
-      @tabClick="tabClick"
-    ></tab-control>
-    <goods-list :goods="showGoods"></goods-list>
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+    >
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <feature-view />
+      <tab-control
+        class="tab-control"
+        :titles="['流行', '新款', '精选']"
+        @tabClick="tabClick"
+      />
+      <goods-list :goods="showGoods" />
+    </scroll>
+    <back-top @click.native="backClick" v-show="ShowBackTop"></back-top>
   </div>
 </template>
 
@@ -17,6 +25,8 @@
 import NavBar from "components/common/navbar/NavBar.vue";
 import TabControl from "components/content/tabControl/TabControl.vue";
 import GoodsList from "components/goods/GoodsList.vue";
+import Scroll from "components/common/scroll/Scroll.vue";
+import BackTop from "components/content/backTop/BackTop.vue";
 
 import HomeSwiper from "./childComps/HomeSwiper.vue";
 import RecommendView from "./childComps/RecommendView.vue";
@@ -33,6 +43,8 @@ export default {
     HomeSwiper,
     RecommendView,
     FeatureView,
+    Scroll,
+    BackTop,
   },
   data() {
     return {
@@ -44,6 +56,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
+      ShowBackTop: false,
     };
   },
   computed: {
@@ -76,6 +89,13 @@ export default {
           break;
       }
     },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0);
+    },
+    contentScroll(position) {
+      // console.log(position);
+      this.ShowBackTop = position.y < -1000;
+    },
     /**
      * 网络请求相关方法
      */
@@ -99,17 +119,26 @@ export default {
 </script>
 
 <style scoped>
+#home {
+  height: 100vh;
+  position: relative;
+}
 .home-nav {
   background-color: var(--color-tint);
   color: #fff;
 
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1;
 }
 .tab-control {
-  position: sticky;
-  top: 44px;
+  position: relative;
   z-index: 1;
+}
+.content {
+  overflow: hidden;
+
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
 }
 </style>
