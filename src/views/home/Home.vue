@@ -68,6 +68,7 @@ export default {
       ShowBackTop: false,
       tabOffsetTop: 0,
       isTabShow: false,
+      saveY: 0,
     };
   },
   computed: {
@@ -84,6 +85,14 @@ export default {
     this.getHomeGoods("sell");
   },
   // mounted() {},
+  // destroyed() {},
+  activated() {
+    this.$refs.scroll.scroll.refresh();
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY();
+  },
   methods: {
     /**
      * 事件监听相关方法
