@@ -1,6 +1,13 @@
 <template>
   <div id="home" class="wrapper">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      class="tab-control"
+      v-show="isTabShow"
+    />
     <scroll
       class="content"
       ref="scroll"
@@ -9,13 +16,13 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <home-swiper :banners="banners" />
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
       <recommend-view :recommends="recommends" />
       <feature-view />
       <tab-control
-        class="tab-control"
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
+        ref="tabControl2"
       />
       <goods-list :goods="showGoods" />
     </scroll>
@@ -59,6 +66,8 @@ export default {
       },
       currentType: "pop",
       ShowBackTop: false,
+      tabOffsetTop: 0,
+      isTabShow: false,
     };
   },
   computed: {
@@ -74,6 +83,7 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
+  // mounted() {},
   methods: {
     /**
      * 事件监听相关方法
@@ -90,6 +100,9 @@ export default {
           this.currentType = "sell";
           break;
       }
+      // 记录选中的商品列表类型
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     // 返回顶部
     backClick() {
@@ -97,11 +110,19 @@ export default {
     },
     // 判断下拉距离
     contentScroll(position) {
-      this.ShowBackTop = position.y < -1000;
+      // 1.判断BackTop是否显示
+      this.ShowBackTop = -position.y > 1000;
+      // 2.决定tabControl是否吸顶
+      this.isTabShow = -position.y > this.tabOffsetTop;
     },
     // 加载数据
     loadMore() {
       this.getHomeGoods(this.currentType);
+    },
+    // 监听轮播图是否加载完成
+    swiperImageLoad() {
+      // 获取tabOffsetTop的offsetTop
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
     },
     /**
      * 网络请求相关方法
@@ -134,18 +155,24 @@ export default {
   background-color: var(--color-tint);
   color: #fff;
 
-  position: relative;
-  z-index: 1;
-}
-.tab-control {
-  position: relative;
-  z-index: 1;
+  /* 在使用浏览器原生滚动是，为了让导航不跟随一起滚动 */
+  /* position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1; */
 }
 .content {
   overflow: hidden;
 
   position: absolute;
+  left: 0;
+  right: 0;
   top: 44px;
   bottom: 49px;
+}
+.tab-control {
+  position: relative;
+  z-index: 1;
 }
 </style>
