@@ -2,7 +2,7 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-nav" />
-    <scroll class="content" :pull-up-load="true" ref="scroll">
+    <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll">
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
@@ -93,6 +93,13 @@ export default {
 }
 .content {
   /* -号两边必须有空格，否则不生效 */
-  height: calc(100% - 44px);
+  /* height: calc(100% - 44px); */
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44px;
+  bottom: 0px;
+  overflow: hidden;
 }
 </style>
