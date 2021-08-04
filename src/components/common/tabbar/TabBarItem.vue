@@ -1,5 +1,4 @@
 <template>
-  <!-- 所有的item都战术同一个图片，同一个文字-->
   <div class="tab-bar-item" @click="itemClick">
     <div v-if="!isActive"><slot name="item-icon"></slot></div>
     <div v-else><slot name="item-icon-active"></slot></div>
