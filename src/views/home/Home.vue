@@ -33,7 +33,7 @@
 <script>
 import NavBar from "components/common/navbar/NavBar.vue";
 import TabControl from "components/content/tabControl/TabControl.vue";
-import GoodsList from "components/goods/GoodsList.vue";
+import GoodsList from "components/content/goods/GoodsList.vue";
 import Scroll from "components/common/scroll/Scroll.vue";
 import BackTop from "components/content/backTop/BackTop.vue";
 
@@ -53,7 +53,7 @@ export default {
     RecommendView,
     FeatureView,
     Scroll,
-    BackTop,
+    BackTop
   },
   data() {
     return {
@@ -62,19 +62,19 @@ export default {
       goods: {
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
       currentType: "pop",
       ShowBackTop: false,
       tabOffsetTop: 0,
       isTabShow: false,
-      saveY: 0,
+      saveY: 0
     };
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
-    },
+    }
   },
   created() {
     // 1.请求多个数据
@@ -137,21 +137,21 @@ export default {
      * 网络请求相关方法
      */
     getHomeMultidata() {
-      getHomeMultidata().then((res) => {
+      getHomeMultidata().then(res => {
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       });
     },
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then((res) => {
+      getHomeGoods(type, page).then(res => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // 上拉加载更多，再次加载数据
         this.$refs.scroll.againPullUp();
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

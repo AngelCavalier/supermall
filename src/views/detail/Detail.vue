@@ -8,6 +8,8 @@
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
       <detail-param-info :param-info="paramInfo" />
+      <detail-comment-info :comment-info="commentInfo" />
+      <goods-list :goods="recommends" />
     </scroll>
   </div>
 </template>
@@ -19,10 +21,18 @@ import DetailBaseInfo from "./childCopms/DetailBaseInfo.vue";
 import DetailShopInfo from "./childCopms/DetailShopInfo.vue";
 import DetailGoodsInfo from "./childCopms/DetailGoodsInfo.vue";
 import DetailParamInfo from "./childCopms/DetailParamInfo.vue";
+import DetailCommentInfo from "./childCopms/DetailCommentInfo";
 
 import Scroll from "components/common/scroll/Scroll.vue";
+import GoodsList from "components/content/goods/GoodsList";
 
-import { getDetail, Goods, Shop, GoodsParam } from "network/detail";
+import {
+  getDetail,
+  getRecommend,
+  Goods,
+  Shop,
+  GoodsParam,
+} from "network/detail";
 
 export default {
   name: "Detail",
@@ -33,7 +43,9 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
+    DetailCommentInfo,
     Scroll,
+    GoodsList,
   },
   data() {
     return {
@@ -43,17 +55,20 @@ export default {
       shop: {},
       detailInfo: {},
       paramInfo: {},
+      commentInfo: {},
+      recommends: [],
     };
   },
   created() {
     // 1.保存传入的iid
     this.iid = this.$route.params.iid;
-    // 2.根据iid请求数据
+    // 2.请求详情数据
     getDetail(this.iid).then((res) => {
-      console.log(res);
-      // 1.获取顶部的图片轮播数据
-      this.topImages = res.result.itemInfo.topImages;
+      // console.log(res);
+      // 0.取出数据
       const data = res.result;
+      // 1.获取顶部的图片轮播数据
+      this.topImages = data.itemInfo.topImages;
       // 2.获取商品信息
       this.goods = new Goods(
         data.itemInfo,
@@ -69,6 +84,15 @@ export default {
         data.itemParams.info,
         data.itemParams.rule
       );
+      // 6.取出评论信息
+      if (data.rate.cRate !== 0) {
+        this.commentInfo = data.rate.list[0];
+      }
+    });
+    // 3.请求推荐数据
+    getRecommend().then((res) => {
+      console.log(res);
+      this.recommends = res.data.list;
     });
   },
   methods: {
@@ -79,7 +103,7 @@ export default {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 #detail {
   position: relative;
   z-index: 1;
