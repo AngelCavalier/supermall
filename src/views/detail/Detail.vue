@@ -1,8 +1,8 @@
 <!--  -->
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick" />
-    <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav" />
+    <scroll class="content" :probe-type="3" :pull-up-load="true" ref="scroll" @scroll="contentScroll">
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
@@ -15,27 +15,27 @@
 </template>
 
 <script>
-import DetailNavBar from "./childCopms/DetailNavBar.vue";
-import DetailSwiper from "./childCopms/DetailSwiper.vue";
-import DetailBaseInfo from "./childCopms/DetailBaseInfo.vue";
-import DetailShopInfo from "./childCopms/DetailShopInfo.vue";
-import DetailGoodsInfo from "./childCopms/DetailGoodsInfo.vue";
-import DetailParamInfo from "./childCopms/DetailParamInfo.vue";
-import DetailCommentInfo from "./childCopms/DetailCommentInfo";
+import DetailNavBar from './childCopms/DetailNavBar.vue';
+import DetailSwiper from './childCopms/DetailSwiper.vue';
+import DetailBaseInfo from './childCopms/DetailBaseInfo.vue';
+import DetailShopInfo from './childCopms/DetailShopInfo.vue';
+import DetailGoodsInfo from './childCopms/DetailGoodsInfo.vue';
+import DetailParamInfo from './childCopms/DetailParamInfo.vue';
+import DetailCommentInfo from './childCopms/DetailCommentInfo';
 
-import Scroll from "components/common/scroll/Scroll.vue";
-import GoodsList from "components/content/goods/GoodsList";
-import { debounce } from "common/utils";
+import Scroll from 'components/common/scroll/Scroll.vue';
+import GoodsList from 'components/content/goods/GoodsList';
+
 import {
   getDetail,
   getRecommend,
   Goods,
   Shop,
-  GoodsParam,
-} from "network/detail";
+  GoodsParam
+} from 'network/detail';
 
 export default {
-  name: "Detail",
+  name: 'Detail',
   components: {
     DetailNavBar,
     DetailSwiper,
@@ -45,7 +45,7 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     Scroll,
-    GoodsList,
+    GoodsList
   },
   data() {
     return {
@@ -58,7 +58,7 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [],
-      getThemeTopY: null,
+      getThemeTopY: null
     };
   },
   created() {
@@ -90,14 +90,6 @@ export default {
       if (data.rate.cRate !== 0) {
         this.commentInfo = data.rate.list[0];
       }
-      // this.$nextTick(() => {
-      //   this.themeTopYs = [];
-      //   this.themeTopYs.push(0);
-      //   this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-      //   this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-      //   this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-      //   console.log(this.themeTopYs);
-      // });
     });
     // 3.请求推荐数据
     getRecommend().then((res) => {
@@ -111,11 +103,26 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE);
     },
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 1000);
     },
-  },
+    contentScroll(position) {
+      const positionY = -position.y;
+      let length = this.themeTopYs.length;
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex !== i &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
+          this.$refs.nav.currentIndex = this.currentIndex;
+        }
+      }
+    }
+  }
 };
 </script>
 

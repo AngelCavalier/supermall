@@ -1,32 +1,34 @@
 <!--  -->
 <template>
   <div class="wrapper" ref="wrapper">
-    <div class="content"><slot></slot></div>
+    <div class="content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
-import BScroll from "@better-scroll/core";
-import ObserveDOM from "@better-scroll/observe-dom";
-import Pullup from "@better-scroll/pull-up";
+import BScroll from '@better-scroll/core';
+import ObserveDOM from '@better-scroll/observe-dom';
+import Pullup from '@better-scroll/pull-up';
 BScroll.use(ObserveDOM);
 BScroll.use(Pullup);
 
 export default {
-  name: "Scroll",
+  name: 'Scroll',
   props: {
     probeType: {
       type: Number,
-      default: 0,
+      default: 0
     },
     pullUpLoad: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
-      scroll: null,
+      scroll: null
     };
   },
   mounted() {
@@ -35,18 +37,17 @@ export default {
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
       click: true,
-      observeDOM: true, // 开启 observe-dom 插件
+      observeDOM: true // 开启 observe-dom 插件
     });
 
     // 2. 监听滚动的位置
-    this.scroll.on("scroll", (position) => {
-      // console.log(position);
-      this.$emit("scroll", position);
+    this.scroll.on('scroll', (position) => {
+      this.$emit('scroll', position);
     });
 
     // 3.监听上拉事件
-    this.scroll.on("pullingUp", () => {
-      this.$emit("pullingUp");
+    this.scroll.on('pullingUp', () => {
+      this.$emit('pullingUp');
     });
   },
   methods: {
@@ -70,8 +71,8 @@ export default {
     },
     getScrollY() {
       return this.scroll ? this.scroll.y : 0;
-    },
-  },
+    }
+  }
 };
 </script>
 
