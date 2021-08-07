@@ -12,8 +12,8 @@
       class="content"
       ref="scroll"
       :probe-type="3"
-      @scroll="contentScroll"
       :pull-up-load="true"
+      @scroll="contentScroll"
       @pullingUp="loadMore"
     >
       <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad" />
@@ -31,20 +31,20 @@
 </template>
 
 <script>
-import NavBar from "components/common/navbar/NavBar.vue";
-import TabControl from "components/content/tabControl/TabControl.vue";
-import GoodsList from "components/content/goods/GoodsList.vue";
-import Scroll from "components/common/scroll/Scroll.vue";
-import BackTop from "components/content/backTop/BackTop.vue";
+import NavBar from 'components/common/navbar/NavBar.vue';
+import TabControl from 'components/content/tabControl/TabControl.vue';
+import GoodsList from 'components/content/goods/GoodsList.vue';
+import Scroll from 'components/common/scroll/Scroll.vue';
+import BackTop from 'components/content/backTop/BackTop.vue';
 
-import HomeSwiper from "./childComps/HomeSwiper.vue";
-import RecommendView from "./childComps/RecommendView.vue";
-import FeatureView from "./childComps/FeatureView.vue";
+import HomeSwiper from './childComps/HomeSwiper.vue';
+import RecommendView from './childComps/RecommendView.vue';
+import FeatureView from './childComps/FeatureView.vue';
 
-import { getHomeMultidata, getHomeGoods } from "network/home";
+import { getHomeMultidata, getHomeGoods } from 'network/home';
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     NavBar,
     TabControl,
@@ -64,7 +64,7 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
       },
-      currentType: "pop",
+      currentType: 'pop',
       ShowBackTop: false,
       tabOffsetTop: 0,
       isTabShow: false,
@@ -80,9 +80,9 @@ export default {
     // 1.请求多个数据
     this.getHomeMultidata();
     // 2. 请求商品数据
-    this.getHomeGoods("pop");
-    this.getHomeGoods("new");
-    this.getHomeGoods("sell");
+    this.getHomeGoods('pop');
+    this.getHomeGoods('new');
+    this.getHomeGoods('sell');
   },
   // mounted() {},
   // destroyed() {},
@@ -100,13 +100,13 @@ export default {
     tabClick(index) {
       switch (index) {
         case 0:
-          this.currentType = "pop";
+          this.currentType = 'pop';
           break;
         case 1:
-          this.currentType = "new";
+          this.currentType = 'new';
           break;
         case 2:
-          this.currentType = "sell";
+          this.currentType = 'sell';
           break;
       }
       // 记录选中的商品列表类型
@@ -137,14 +137,14 @@ export default {
      * 网络请求相关方法
      */
     getHomeMultidata() {
-      getHomeMultidata().then(res => {
+      getHomeMultidata().then((res) => {
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       });
     },
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then(res => {
+      getHomeGoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // 上拉加载更多，再次加载数据
