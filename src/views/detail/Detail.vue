@@ -11,6 +11,7 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo" />
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
+    <detail-bottom-bar @addToCart="addToCart" />
   </div>
 </template>
 
@@ -22,6 +23,7 @@ import DetailShopInfo from './childCopms/DetailShopInfo.vue';
 import DetailGoodsInfo from './childCopms/DetailGoodsInfo.vue';
 import DetailParamInfo from './childCopms/DetailParamInfo.vue';
 import DetailCommentInfo from './childCopms/DetailCommentInfo';
+import DetailBottomBar from './childCopms/DetailBottomBar.vue';
 
 import Scroll from 'components/common/scroll/Scroll.vue';
 import GoodsList from 'components/content/goods/GoodsList';
@@ -43,6 +45,7 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
+    DetailBottomBar,
     DetailCommentInfo,
     Scroll,
     GoodsList
@@ -121,6 +124,19 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
+    },
+    addToCart() {
+      // 1.获取购物车需要展示的信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+      console.log(product);
+      // 2. 将商品添加到购物车
+      //this.$store.commit('addCart', product);
+      this.$store.dispatch('addCart', product);
     }
   }
 };
